@@ -73,13 +73,14 @@ class BackyardFlyer(Drone):
 
     def calculate_box(self):
         """
-        TODO: Fill out this method
-        
         1. Return waypoints to fly a box
         """
         # altitude = self.target_position
-        # square = [(10, 0, )]
-        pass
+        square = [(10,  0, self._TARGET_ALTITUTDE, 0),
+                  (10, 10, self._TARGET_ALTITUTDE, 0),
+                  (0,  10, self._TARGET_ALTITUTDE, 0),
+                  (0,   0, self._TARGET_ALTITUTDE, 0)]
+        return square
 
     def arming_transition(self):
         """
