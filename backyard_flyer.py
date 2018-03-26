@@ -45,9 +45,13 @@ class BackyardFlyer(Drone):
             # coordinate conversion
             altitude = -1.0 * self.local_position[2]
 
+            # mission planning
+            self.all_waypoints = self.calculate_box()
+            # state transition
+
             # check if altitude is within 95% of target
-            if altitude > 0.95 * self.target_position[2]:
-                self.landing_transition()
+            # if altitude > 0.95 * self.target_position[2]:
+            #     self.landing_transition()
 
     def velocity_callback(self):
         """
@@ -76,11 +80,11 @@ class BackyardFlyer(Drone):
         1. Return waypoints to fly a box
         """
         # altitude = self.target_position
-        square = [(10,  0, self._TARGET_ALTITUTDE, 0),
+        waypoints = [(10,  0, self._TARGET_ALTITUTDE, 0),
                   (10, 10, self._TARGET_ALTITUTDE, 0),
                   (0,  10, self._TARGET_ALTITUTDE, 0),
                   (0,   0, self._TARGET_ALTITUTDE, 0)]
-        return square
+        return waypoints
 
     def arming_transition(self):
         """
@@ -112,12 +116,16 @@ class BackyardFlyer(Drone):
 
     def waypoint_transition(self):
         """
-        TODO: Fill out this method
-    
         1. Command the next waypoint position
         2. Transition to WAYPOINT state
         """
         print("waypoint transition")
+        self.flight_state = States.WAYPOINT
+        self.target_position = self.all_waypoints.pop(0)
+        self.cmd_position(self.target_position[0],
+                          self.target_position[1],
+                          self.target_position[2], 0.0)
+        print("Flying to", self.target_position)
 
     def landing_transition(self):
         """
@@ -151,6 +159,13 @@ class BackyardFlyer(Drone):
         self.stop()
         self.in_mission = False
         self.flight_state = States.MANUAL
+
+    # helpers
+    def calculate_velo_norm(self):
+        return np.linalg.norm(self.local_velocity[0: 2])
+
+    def calculate_target_distance(self):
+        return np.linalg.norm(self.target_position[0:2] - self.local_position[0:2])
 
     def start(self):
         """This method is provided
