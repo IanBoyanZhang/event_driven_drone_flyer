@@ -39,6 +39,8 @@ class BackyardFlyer(Drone):
         """
         This triggers when `MsgID.LOCAL_POSITION` is received and self.local_position contains new data
         """
+        # Debug
+        self.show_local_positions()
         # coordinate conversion
         # altitude = -1.0 * self.local_position[2]
         # check if altitude is within 95% of target
@@ -170,6 +172,10 @@ class BackyardFlyer(Drone):
 
     def calculate_target_distance(self):
         return np.linalg.norm(self.target_position[0:2] - self.local_position[0:2])
+
+    def show_local_positions(self):
+        print("Pos: ", self.local_position)
+        print("Dis: ", self.calculate_target_distance())
 
     def start(self):
         """This method is provided
